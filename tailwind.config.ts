@@ -24,6 +24,13 @@ const config = {
         Spartan: ["League Spartan"],
       },
       colors: {
+        purpleDark: "#7c5dfa",
+        purpleLight: "#9277ff",
+        greenLow: "rgba(51,214,159,.0571)",
+        greenLight: "#33d69f",
+        orangeLight: "#ff8f00",
+        orangeLow: "rgba(255,143,0,.0571)",
+        grayLow: "rgba(223,227,250,.0571)",
         border: "hsl(var(--border))",
         input: "var(--input)",
         ring: "hsl(var(--ring))",

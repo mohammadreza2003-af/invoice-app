@@ -1,5 +1,7 @@
 "use client";
 
+import Invoice from "@/components/Invoice";
+import InvoiceHeader from "@/components/InvoiceHeader";
 import { Button } from "@/components/ui/button";
 import { checkUser, signout } from "@/services/auth";
 import { showToast } from "@/utils/helper";
@@ -24,8 +26,9 @@ export default function Home() {
   console.log(data, "user");
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <Button onClick={() => handleSignout()}>SignOut</Button>
-    </main>
+    <div className="w-full flex flex-col items-center justify-center min-h-[80vh]">
+      <InvoiceHeader />
+      <Invoice />
+    </div>
   );
 }

@@ -3,10 +3,8 @@ import Navbar from "./Navbar";
 
 const Header = () => {
   return (
-    <header className="w-full bg-foreground py-8 mx-auto">
-      <div className="flex w-full items-center justify-center">
-        <Navbar />
-      </div>
+    <header className="w-full bg-foreground dark:bg-foreground h-[4.5rem] mx-auto rounded-b-xl">
+      <Navbar />
     </header>
   );
 };

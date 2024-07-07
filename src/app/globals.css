@@ -24,10 +24,13 @@ $orange: #ff8f00;
 $fadedOrange: rgba(255, 143, 0, 0.0571);
 $otherDark: #373b53; */
 
+.invoice-shadow {
+  box-shadow: 0 10px 10px -10px rgba(72, 84, 159, .1004);
+}
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: #f8f8fb;
+      --foreground: #252945;
 
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
