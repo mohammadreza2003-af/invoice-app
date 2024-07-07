@@ -12,7 +12,7 @@ export type LoginSubmitFrom = {
 
 export type InvoiceType = {
   id: string;
-  createdAt: string;
+  created_at: string;
   paymentDue: string;
   description: string;
   paymentTerms: number;

@@ -1,5 +1,7 @@
 import Image from "next/image";
 import { Button } from "./ui/button";
+import NewInvoice from "./NewInvoice";
+import { DatePicker } from "./DatePicker";
 
 const InvoiceHeader = () => {
   return (
@@ -13,20 +15,7 @@ const InvoiceHeader = () => {
         </div>
         <div>
           <p>Filter by status</p>
-          <Button
-            variant="none"
-            className="bg-purpleDark text-[#fff] text-lg flex items-center justify-between gap-x-4 rounded-full py-[28px]"
-          >
-            <div className="bg-white rounded-full flex items-center justify-center p-3">
-              <Image
-                src="/assets/icon-plus.svg"
-                width={12}
-                height={12}
-                alt="new-invoice"
-              />
-            </div>
-            <h2>New Invoice</h2>
-          </Button>
+          <NewInvoice />
         </div>
       </div>
     </div>

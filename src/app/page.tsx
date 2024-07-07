@@ -3,10 +3,11 @@
 import Invoice from "@/components/Invoice";
 import InvoiceHeader from "@/components/InvoiceHeader";
 import { Button } from "@/components/ui/button";
+import { getAllInvoices } from "@/services/apiInvoice";
 import { checkUser, signout } from "@/services/auth";
 import { showToast } from "@/utils/helper";
 import { useRouter } from "next/navigation";
-import { useQueries, useQuery } from "react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
 
 export default function Home() {
   const router = useRouter();
@@ -18,17 +19,18 @@ export default function Home() {
     }
   };
 
-  const { data } = useQuery({
-    queryKey: ["getUser"],
-    queryFn: checkUser,
+  const { data: invoices, isLoading } = useQuery({
+    queryKey: ["getAllInvoices"],
+    queryFn: getAllInvoices,
   });
 
-  console.log(data, "user");
+  console.log(invoices);
 
   return (
     <div className="w-full flex flex-col items-center justify-center min-h-[80vh]">
       <InvoiceHeader />
-      <Invoice />
+      <Button onClick={() => handleSignout()} />
+      <Invoice invoices={invoices} isLoading={isLoading} />
     </div>
   );
 }

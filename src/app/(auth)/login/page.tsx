@@ -14,7 +14,7 @@ import {
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { login } from "@/services/auth";
-import { useMutation } from "react-query";
+import { useMutation } from "@tanstack/react-query";
 import { LoginSubmitFrom } from "@/constant/types";
 import { useRouter } from "next/navigation";
 import { showToast } from "@/utils/helper";
@@ -25,7 +25,7 @@ const Login = () => {
     type: "",
     message: "",
   });
-  const { isLoading, mutate } = useMutation({
+  const { isPending, mutate } = useMutation({
     mutationFn: login,
     onSuccess: (res) => {
       router.push("/");
@@ -90,11 +90,11 @@ const Login = () => {
             )}
             <div>
               <Button
-                disabled={isLoading}
+                disabled={isPending}
                 type="submit"
                 className="flex justify-center w-full px-4 py-2 text-sm font-medium"
               >
-                {isLoading ? "Loading..." : "Login"}
+                {isPending ? "Loading..." : "Login"}
               </Button>
             </div>
           </form>
