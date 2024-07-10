@@ -1,6 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+
+import Link from "next/link";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -11,44 +16,33 @@ import {
   CardTitle,
   CardFooter,
 } from "@/components/ui/card";
-import Link from "next/link";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { login } from "@/services/auth";
-import { useMutation } from "@tanstack/react-query";
+
 import { LoginSubmitFrom } from "@/constant/types";
-import { useRouter } from "next/navigation";
+import { login } from "@/services/auth";
 import { showToast } from "@/utils/helper";
 
 const Login = () => {
   const router = useRouter();
-  const [error, setError] = useState<{ type: string; message: string }>({
-    type: "",
-    message: "",
-  });
+  const { register, handleSubmit, formState } = useForm<LoginSubmitFrom>();
+  const { errors } = formState;
   const { isPending, mutate } = useMutation({
     mutationFn: login,
     onSuccess: (res) => {
       router.push("/");
       showToast("Successfuly", "Loign successful");
     },
+    onError: (err) => {
+      console.log(err);
+    },
   });
 
   const onSubmit: SubmitHandler<LoginSubmitFrom> = (data) => {
-    const { password, email } = data;
-    if (password.length < 8) {
-      setError({ type: "password", message: "Password is required" });
-      return;
-    }
-    if (!email) {
-      setError({ type: "email", message: "Email is required" });
-      return;
-    }
     mutate(data);
   };
 
-  console.log(error);
-
-  const { register, handleSubmit } = useForm<LoginSubmitFrom>();
+  const onError = (error: any) => {
+    console.log(error);
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
@@ -59,18 +53,25 @@ const Login = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+          <form
+            className="space-y-6"
+            onSubmit={handleSubmit(onSubmit, onError)}
+          >
             <div>
               <Label htmlFor="email" className="block text-sm font-medium mb-2">
                 Email address
               </Label>
               <Input
                 type="email"
-                {...register("email")}
-                required
+                {...register("email", {
+                  required: "Email is required",
+                })}
                 className="block w-full px-3 py-2 mt-1"
               />
             </div>
+            {errors.email?.message && (
+              <p className="text-red-500 font-medium">{errors.email.message}</p>
+            )}
             <div>
               <Label
                 htmlFor="password"
@@ -80,13 +81,18 @@ const Login = () => {
               </Label>
               <Input
                 type="password"
-                {...register("password")}
-                required
+                {...register("password", {
+                  required: "Password is required",
+                  validate: (value: string) =>
+                    value.length >= 8 || "The Password is very short",
+                })}
                 className="block w-full px-3 py-2 mt-1"
               />
             </div>
-            {error.message.length > 0 && error.type === "password" && (
-              <p className="text-red-500 font-medium">{error.message}</p>
+            {errors.password?.message && (
+              <p className="text-red-500 font-medium">
+                {errors.password.message}
+              </p>
             )}
             <div>
               <Button

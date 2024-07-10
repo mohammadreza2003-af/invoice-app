@@ -11,14 +11,14 @@ export type LoginSubmitFrom = {
 };
 
 export type InvoiceType = {
-  id: string;
+  id?: string;
   created_at: string;
   paymentDue: string;
   description: string;
   paymentTerms: number;
   clientName: string;
   clientEmail: string;
-  status: string;
+  status: "paid" | "pending" | "draft";
   senderAddress: AddressType;
   clientAddress: AddressType;
   items: ItemType[];
@@ -33,8 +33,32 @@ export type AddressType = {
 };
 
 export type ItemType = {
+  id?: number;
   name: string;
   quantity: number;
   price: number;
+  total: number;
+};
+
+export type newInvoiceType = {
+  id?: string;
+  created_at: string;
+  paymentDue: string;
+  projectDescription: string;
+  paymentTerms: number;
+  clientName: string;
+  clientEmail: string;
+  senderCity: string;
+  senderCountry: string;
+  senderPostCode: string;
+  senderStreetAddress: string;
+  clientStreetAddress: string;
+  clientCity: string;
+  clientPostCode: string;
+  clientCountry: string;
+  status: "paid" | "pending" | "draft";
+  senderAddress: AddressType;
+  clientAddress: AddressType;
+  items: ItemType[];
   total: number;
 };

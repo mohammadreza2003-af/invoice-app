@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useMutation } from "react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useForm, SubmitHandler } from "react-hook-form";
 import Link from "next/link";
 
@@ -22,8 +21,10 @@ import {
 
 const SignUp = () => {
   const router = useRouter();
-  const [error, setError] = useState("");
-  const { isLoading, mutate, status } = useMutation({
+  const { register, handleSubmit, getValues, formState } =
+    useForm<SignUpSubmitFrom>();
+  const { errors } = formState;
+  const { isPaused, mutate, status } = useMutation({
     mutationFn: signup,
     onSuccess: (res) => {
       console.log(res);
@@ -31,22 +32,14 @@ const SignUp = () => {
     },
   });
 
-  const { register, handleSubmit } = useForm<SignUpSubmitFrom>();
-
   const onSubmit: SubmitHandler<SignUpSubmitFrom> = (data) => {
-    const { password, confirmPassword, email, fullName } = data;
-    if (!password || !confirmPassword || !email) {
-      setError("All fileds required");
-      return;
-    }
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
+    const { password, email, fullName } = data;
     mutate({ password, email, fullName });
   };
 
-  console.log(status);
+  const onError = (error: any) => {
+    console.log(error);
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
@@ -57,7 +50,10 @@ const SignUp = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+          <form
+            className="space-y-6"
+            onSubmit={handleSubmit(onSubmit, onError)}
+          >
             <div>
               <Label
                 htmlFor="fullname"
@@ -67,22 +63,34 @@ const SignUp = () => {
               </Label>
               <Input
                 type="text"
-                {...register("fullName")}
-                required
+                {...register("fullName", {
+                  required: "Full Name is required",
+                  validate: (value: string) =>
+                    value.length > 5 || "The Full Name is very short",
+                })}
                 className="block w-full px-3 py-2 mt-1"
               />
             </div>
+            {errors.fullName?.message && (
+              <p className="text-red-500 font-medium">
+                {errors.fullName.message}
+              </p>
+            )}
             <div>
               <Label htmlFor="email" className="block text-sm font-medium mb-2">
                 Email address
               </Label>
               <Input
                 type="email"
-                {...register("email")}
-                required
+                {...register("email", {
+                  required: "Email is required",
+                })}
                 className="block w-full px-3 py-2 mt-1"
               />
             </div>
+            {errors.email?.message && (
+              <p className="text-red-500 font-medium">{errors.email.message}</p>
+            )}
             <div>
               <Label
                 htmlFor="password"
@@ -92,33 +100,50 @@ const SignUp = () => {
               </Label>
               <Input
                 type="password"
-                {...register("password")}
-                required
+                {...register("password", {
+                  required: "The Password is required",
+                  validate: (value: string) =>
+                    value.length > 8 || "The Password is very short",
+                })}
                 className="block w-full px-3 py-2 mt-1"
               />
             </div>
-            <div>
+            {errors.password?.message && (
+              <p className="text-red-500 font-medium">
+                {errors.password.message}
+              </p>
+            )}
+            <div className="relative">
               <Label
                 htmlFor="confirmPassword"
                 className="block text-sm font-medium mb-2"
               >
                 Confirm Password
               </Label>
-              <Input
+              <input
                 type="password"
-                {...register("confirmPassword")}
-                required
-                className="block w-full px-3 py-2 mt-1"
+                {...register("confirmPassword", {
+                  required: "Confirm Password is required",
+                  validate: (value: any) =>
+                    value === getValues().password || "Password don't match",
+                })}
+                className={`block w-full px-3 py-2 mt-1 border ${
+                  errors.password ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:outline-none focus:ring focus:ring-opacity-50`}
               />
+              {errors.confirmPassword && (
+                <p className="absolute inset-y-0 right-0 top-[40%] flex items-center pr-3 text-red-500">
+                  {errors.confirmPassword.message}
+                </p>
+              )}
             </div>
-            {error && <p className="text-red-500 font-medium">{error}</p>}
             <div>
               <Button
-                disabled={isLoading}
+                disabled={isPaused}
                 type="submit"
                 className="flex justify-center w-full px-4 py-2 text-sm font-medium"
               >
-                {isLoading ? "Loading..." : "Sign up"}
+                {isPaused ? "Loading..." : "Sign up"}
               </Button>
             </div>
           </form>
