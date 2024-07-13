@@ -73,7 +73,6 @@ const InvoiceId = () => {
     },
   });
 
-  console.log(markIsPending, "mark");
 
   if (isPending || !invoice || markIsPending) {
     return (

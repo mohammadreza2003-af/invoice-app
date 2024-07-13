@@ -2,7 +2,6 @@ import { createClient } from "@/utils/supabase/server";
 
 export async function POST(request: Request) {
   const newInvoice = await request.json();
-  console.log(newInvoice, "data");
   const supabase = createClient();
   const { error } = await supabase
     .from("invoices")

@@ -12,7 +12,6 @@ const useNewInvoice = () => {
   const queryClient = useQueryClient();
 
   const onSuccessHandler = (res: any) => {
-    console.log("success", res);
     queryClient.invalidateQueries({ queryKey: ["Invoices"] });
   };
 

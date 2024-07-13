@@ -10,7 +10,6 @@ const Invoice = () => {
 
   const { data: userData } = useUserData();
 
-  console.log(userData, "userData");
 
   const router = useRouter();
   const invoices = data ?? [];

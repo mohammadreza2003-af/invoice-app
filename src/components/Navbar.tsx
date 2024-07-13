@@ -13,7 +13,6 @@ const Navbar = () => {
   const router = useRouter();
   const { data: userData } = useUserData();
   const query = useQueryClient();
-  console.log(userData);
 
   const handleSignout = async () => {
     const res = await signout();

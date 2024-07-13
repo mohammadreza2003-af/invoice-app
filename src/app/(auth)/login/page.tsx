@@ -27,7 +27,6 @@ const Login = () => {
   const { register, handleSubmit, formState } = useForm<LoginSubmitFrom>();
   const { errors } = formState;
 
-  const { data: userData } = useUserData();
   const query = useQueryClient();
 
   const { isPending, mutate } = useMutation({
@@ -36,7 +35,6 @@ const Login = () => {
       query.invalidateQueries({
         queryKey: ["userData"],
       });
-      console.log(res, "login");
       router.push("/");
       showToast("Successfuly", "Loign successful");
     },

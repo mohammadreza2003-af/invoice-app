@@ -9,7 +9,6 @@ export async function DELETE(request: Request) {
     .delete()
     .eq("id", id);
 
-  console.log(error?.message);
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       status: 400,

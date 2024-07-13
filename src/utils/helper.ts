@@ -41,7 +41,6 @@ export const nameFixer = (name: string) => {
 export const calculatePaymentDue = (createdAt: Date, paymentTerms: number) => {
   const createdDate = new Date(createdAt);
   createdDate.setDate(createdDate.getDate() + paymentTerms);
-  console.log(createdDate, "create Date");
   return createdDate.toISOString();
 };
 

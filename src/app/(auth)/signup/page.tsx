@@ -26,7 +26,6 @@ const SignUp = () => {
   const { register, handleSubmit, getValues, formState } =
     useForm<SignUpSubmitFrom>();
 
-  const { data: userData } = useUserData();
   const query = useQueryClient();
 
   const { errors } = formState;
@@ -36,7 +35,6 @@ const SignUp = () => {
       query.invalidateQueries({
         queryKey: ["userData"],
       });
-      console.log(res);
       router.push("/signup/confirm");
     },
     onError: (err) => {
