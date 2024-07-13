@@ -6,14 +6,14 @@ import { useRouter } from "next/navigation";
 import { Button } from "./ui/button";
 import { signout } from "@/services/auth";
 import { showToast } from "@/utils/helper";
-import useUserData from "@/app/hooks/useUserData";
 import { useQueryClient } from "@tanstack/react-query";
+import useAuth from "@/hooks/useAuth";
 
 const Navbar = () => {
-  const router = useRouter();
-  const { data: userData } = useUserData();
   const query = useQueryClient();
+  const router = useRouter();
 
+  const { isLogin } = useAuth();
   const handleSignout = async () => {
     const res = await signout();
     if (res.ok) {
@@ -47,7 +47,7 @@ const Navbar = () => {
           height={40}
           alt="Logo"
         />
-        {userData !== null && (
+        {isLogin && (
           <Button
             onClick={() => handleSignout()}
             className="dark:text-white text-white"

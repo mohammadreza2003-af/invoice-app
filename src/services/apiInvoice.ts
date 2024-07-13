@@ -77,9 +77,11 @@ export async function fetchInvoicesByStatus(statuses: string[]) {
   const supabase = createClient();
 
   try {
+    const { data: user_info } = await supabase.auth.getUser();
     const { data: invoices, error } = await supabase
       .from("invoices")
       .select("*")
+      .eq("user_id", user_info?.user?.id)
       .in("status", statuses);
     if (error) {
       throw error;

@@ -21,9 +21,9 @@ import {
 import InputField from "./InputField";
 import SelectPayment from "./SelectPayment";
 import { Input } from "./ui/input";
-import useNewInvoice from "@/app/hooks/useNewInvoice";
+import useNewInvoice from "@/hooks/useNewInvoice";
 import { useQueryClient } from "@tanstack/react-query";
-import useUserData from "@/app/hooks/useUserData";
+import useUserData from "@/hooks/useUserData";
 
 const NewInvoice = ({
   invoiceToEdit = {} as InvoiceType,
@@ -219,7 +219,7 @@ const NewInvoice = ({
           </Button>
         ) : (
           <div
-            className="bg-purpleDark text-[#fff] text-lg flex items-center justify-between gap-x-4 rounded-full py-3 px-3"
+            className="bg-purpleDark text-[#fff] text-lg flex items-center justify-between gap-x-4 rounded-full py-2 px-2"
             onClick={() => setIsOpen(!isOpen)}
           >
             <div className="bg-white rounded-full flex items-center justify-center p-3">

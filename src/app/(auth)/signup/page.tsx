@@ -18,7 +18,7 @@ import {
   CardTitle,
   CardFooter,
 } from "@/components/ui/card";
-import useUserData from "@/app/hooks/useUserData";
+import useUserData from "@/hooks/useUserData";
 import { showToast } from "@/utils/helper";
 
 const SignUp = () => {

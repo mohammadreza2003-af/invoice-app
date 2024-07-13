@@ -20,7 +20,7 @@ import {
 import { LoginSubmitFrom } from "@/constant/types";
 import { login } from "@/services/auth";
 import { showToast } from "@/utils/helper";
-import useUserData from "@/app/hooks/useUserData";
+import useUserData from "@/hooks/useUserData";
 
 const Login = () => {
   const router = useRouter();

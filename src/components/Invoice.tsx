@@ -1,21 +1,17 @@
 import Image from "next/image";
 import { formatDate, nameFixer } from "@/utils/helper";
-import useInvoices from "@/app/hooks/useInvoices";
+import useInvoices from "@/hooks/useInvoices";
 import { useRouter } from "next/navigation";
-import useUserData from "@/app/hooks/useUserData";
 import { Skeleton } from "./ui/skeleton";
 
 const Invoice = () => {
   const { isLoading, data } = useInvoices();
 
-  const { data: userData } = useUserData();
-
-
   const router = useRouter();
   const invoices = data ?? [];
   if (isLoading) {
     return (
-      <div className="md:min-w-[45rem] sm:min-w-[35rem] min-w-[24rem] h-[80%]">
+      <div className="md:min-w-[45rem] sm:min-w-[35rem] max-w-[20rem] m-auto h-[80%] scrollbar-hide">
         <div className="flex flex-col space-y-6">
           <Skeleton className="md:h-[90px] h-[141px] w-full rounded-lg dark:bg-foreground bg-slate-200" />
           <Skeleton className="md:h-[90px] h-[141px] w-full rounded-lg dark:bg-foreground bg-slate-200" />
@@ -49,7 +45,7 @@ const Invoice = () => {
   };
 
   return (
-    <div className="md:min-w-[45rem] sm:min-w-[35rem] min-w-[24rem] h-[80%] scrollbar-hide">
+    <div className="md:min-w-[45rem] sm:min-w-[35rem] max-w-[20rem] m-auto h-[80%] scrollbar-hide">
       {invoices.map((invoice) => (
         <div
           key={invoice.id}

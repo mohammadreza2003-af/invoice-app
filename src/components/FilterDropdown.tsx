@@ -39,7 +39,7 @@ const FilterDropdown = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <div className="flex items-center justify-center">
-          <Button variant="none" className="dark:text-white text-lg">
+          <Button variant="none" className="dark:text-white sm:text-lg text-sm">
             Filter by status
           </Button>
           <Image
