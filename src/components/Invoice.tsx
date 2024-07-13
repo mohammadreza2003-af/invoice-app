@@ -44,6 +44,28 @@ const Invoice = () => {
     );
   };
 
+  if (invoices.length === 0 && !isLoading) {
+    return (
+      <div className="md:min-w-[45rem] sm:min-w-[35rem] max-w-[20rem] m-auto h-[80%] scrollbar-hide">
+        <div className="flex w-full items-center justify-center dark:text-white  flex-col gap-y-6">
+          <Image
+            src="/assets/illustration-empty.svg"
+            width={256}
+            height={256}
+            alt="empty"
+          />
+          <div className="flex flex-col justify-center items-center text-center">
+            <h2 className="font-bold text-xl ">There is nothing here</h2>
+            <p>
+              Create an invoice by clicking the New Invoice button and get
+              started
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="md:min-w-[45rem] sm:min-w-[35rem] max-w-[20rem] m-auto h-[80%] scrollbar-hide">
       {invoices.map((invoice) => (
