@@ -6,7 +6,8 @@ export async function POST(resquet: Request) {
   let { data: invoices, error } = await supabase
     .from("invoices")
     .select("*")
-    .eq("id", 1);
+    .eq("id", id)
+    .single();
   if (error) {
     return Response.json({ error: error.message }, { status: 400 });
   }

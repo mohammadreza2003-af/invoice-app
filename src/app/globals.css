@@ -25,8 +25,9 @@ $fadedOrange: rgba(255, 143, 0, 0.0571);
 $otherDark: #373b53; */
 
 .invoice-shadow {
-  box-shadow: 0 10px 10px -10px rgba(72, 84, 159, .1004);
+  box-shadow: 0 5px 30px -11px rgba(72, 84, 159, .2);
 }
+
 @layer base {
   :root {
     --background: #f8f8fb;

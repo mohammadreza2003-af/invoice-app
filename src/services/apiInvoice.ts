@@ -14,9 +14,10 @@ export const getAllInvoices = async () => {
   }
 };
 
-export const newInvoice = async (invoice: InvoiceType) => {
+export const newInvoice = async (invoice: InvoiceType, id?: number) => {
   try {
-    const res = await fetch("/api/newInvoice", {
+    const api = id ? "/api/editInvoice" : "/api/newInvoice";
+    const res = await fetch(api, {
       body: JSON.stringify(invoice),
       method: "POST",
       headers: {
@@ -51,6 +52,27 @@ export const getInvoiceById = async (id: number) => {
     console.error(err);
   }
 };
+
+export const deleteInvoice = async (id: number) => {
+  try {
+    const res = await fetch("/api/deleteInvoice", {
+      body: JSON.stringify({ id }),
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!res.ok) {
+      throw new Error("Fetching error");
+    }
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+};
+
 export async function fetchInvoicesByStatus(statuses: string[]) {
   const supabase = createClient();
 

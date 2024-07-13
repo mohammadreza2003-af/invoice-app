@@ -6,7 +6,7 @@ const InvoiceHeader = () => {
   const { data, isLoading } = useInvoices();
 
   return (
-    <div className="my-16 h-[20%]">
+    <div className="my-16 h-[20%] mt-28 scrollbar-hide">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="font-semibold text-primary md:text-4xl text-xl">

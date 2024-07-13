@@ -25,13 +25,13 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          "min-h-screen bg-background antialiased font-Spartan",
+          "min-h-screen bg-background antialiased font-Spartan overflow-y-scroll scrollbar-hide",
           fontSans.variable
         )}
       >
         <Providers>
           <Header />
-          <main>{children}</main>
+          <main className="scrollbar-hide">{children}</main>
           <Toaster />
         </Providers>
       </body>

@@ -1,7 +1,7 @@
 "use client";
 
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
 import Link from "next/link";
@@ -20,18 +20,28 @@ import {
 import { LoginSubmitFrom } from "@/constant/types";
 import { login } from "@/services/auth";
 import { showToast } from "@/utils/helper";
+import useUserData from "@/app/hooks/useUserData";
 
 const Login = () => {
   const router = useRouter();
   const { register, handleSubmit, formState } = useForm<LoginSubmitFrom>();
   const { errors } = formState;
+
+  const { data: userData } = useUserData();
+  const query = useQueryClient();
+
   const { isPending, mutate } = useMutation({
     mutationFn: login,
     onSuccess: (res) => {
+      query.invalidateQueries({
+        queryKey: ["userData"],
+      });
+      console.log(res, "login");
       router.push("/");
       showToast("Successfuly", "Loign successful");
     },
     onError: (err) => {
+      showToast("Error", err.message);
       console.log(err);
     },
   });
@@ -57,7 +67,7 @@ const Login = () => {
             className="space-y-6"
             onSubmit={handleSubmit(onSubmit, onError)}
           >
-            <div>
+            <div className="relative">
               <Label htmlFor="email" className="block text-sm font-medium mb-2">
                 Email address
               </Label>
@@ -66,13 +76,17 @@ const Login = () => {
                 {...register("email", {
                   required: "Email is required",
                 })}
-                className="block w-full px-3 py-2 mt-1"
+                className={`block w-full px-3 py-2 mt-1 border ${
+                  errors.email ? "border-red-500" : ""
+                } rounded-md shadow-sm focus:outline-none focus:ring focus:ring-opacity-50`}
               />
+              {errors.email && (
+                <p className="absolute inset-y-0 right-0 top-[40%] flex items-center pr-3 text-red-500">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
-            {errors.email?.message && (
-              <p className="text-red-500 font-medium">{errors.email.message}</p>
-            )}
-            <div>
+            <div className="relative">
               <Label
                 htmlFor="password"
                 className="block text-sm font-medium mb-2"
@@ -82,18 +96,20 @@ const Login = () => {
               <Input
                 type="password"
                 {...register("password", {
-                  required: "Password is required",
+                  required: "The Password is required",
                   validate: (value: string) =>
                     value.length >= 8 || "The Password is very short",
                 })}
-                className="block w-full px-3 py-2 mt-1"
+                className={`block w-full px-3 py-2 mt-1 border ${
+                  errors.password ? "border-red-500" : ""
+                } rounded-md shadow-sm focus:outline-none focus:ring focus:ring-opacity-50`}
               />
+              {errors.password && (
+                <p className="absolute inset-y-0 right-0 top-[40%] flex items-center pr-3 text-red-500">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
-            {errors.password?.message && (
-              <p className="text-red-500 font-medium">
-                {errors.password.message}
-              </p>
-            )}
             <div>
               <Button
                 disabled={isPending}

@@ -1,24 +1,18 @@
 "use client";
 
 import * as React from "react";
-import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
 import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import Image from "next/image";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 
 export function ModeToggle() {
   const { setTheme } = useTheme();
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+    <HoverCard>
+      <HoverCardTrigger asChild>
         <Button size="icon" variant="modeToggle">
           <Image
             src="/assets/icon-sun.svg"
@@ -36,18 +30,20 @@ export function ModeToggle() {
           />
           <span className="sr-only">Toggle theme</span>
         </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>
-          Light
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
-          Dark
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
-          System
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </HoverCardTrigger>
+      <HoverCardContent className="w-60 dark:bg-foreground">
+        <div className="flex items-center justify-center">
+          <Button variant="none" onClick={() => setTheme("light")}>
+            Light
+          </Button>
+          <Button variant="none" onClick={() => setTheme("dark")}>
+            Dark
+          </Button>
+          <Button variant="none" onClick={() => setTheme("system")}>
+            System
+          </Button>
+        </div>
+      </HoverCardContent>
+    </HoverCard>
   );
 }

@@ -12,27 +12,94 @@ import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { DatePicker } from "./DatePicker";
 import { useEffect, useState } from "react";
-import { InvoiceType, ItemType, newInvoiceType } from "@/constant/types";
-import { newInvoiceSchema } from "@/utils/helper";
+import { InvoiceType, ItemType } from "@/constant/types";
+import {
+  calculatePaymentDue,
+  newInvoiceSchema,
+  showToast,
+} from "@/utils/helper";
 import InputField from "./InputField";
 import SelectPayment from "./SelectPayment";
 import { Input } from "./ui/input";
 import useNewInvoice from "@/app/hooks/useNewInvoice";
+import { useQueryClient } from "@tanstack/react-query";
+import useUserData from "@/app/hooks/useUserData";
 
-const NewInvoice = () => {
+const NewInvoice = ({
+  invoiceToEdit = {} as InvoiceType,
+}: {
+  invoiceToEdit?: InvoiceType;
+}) => {
+  const { id: editId } = invoiceToEdit;
+
+  const { data: userData } = useUserData();
+
+  const queryClient = useQueryClient();
+
+  const isEdit = Boolean(editId);
+
+  const initialFormData = isEdit
+    ? {
+        items: invoiceToEdit.items,
+        projectDescription: invoiceToEdit.description,
+        clientCountry: invoiceToEdit.clientAddress.country,
+        clientPostCode: invoiceToEdit.clientAddress.postCode,
+        clientCity: invoiceToEdit.clientAddress.city,
+        clientStreetAddress: invoiceToEdit.clientAddress.street,
+        clientEmail: invoiceToEdit.clientEmail,
+        clientName: invoiceToEdit.clientName,
+        senderCountry: invoiceToEdit.senderAddress.country,
+        senderPostCode: invoiceToEdit.senderAddress.postCode,
+        senderCity: invoiceToEdit.senderAddress.city,
+        senderStreetAddress: invoiceToEdit.senderAddress.street,
+        createdAt: new Date(invoiceToEdit.created_at),
+        paymentTerms: String(invoiceToEdit.paymentTerms || 1),
+      }
+    : {
+        items: [
+          {
+            id: 1,
+            name: "",
+            price: 0,
+            total: 0,
+            quantity: 1,
+          },
+        ],
+        projectDescription: "",
+        clientCountry: "",
+        clientPostCode: "",
+        clientCity: "",
+        clientStreetAddress: "",
+        clientEmail: "",
+        clientName: "",
+        senderCountry: "",
+        senderPostCode: "",
+        senderCity: "",
+        senderStreetAddress: "",
+        createdAt: new Date(),
+        paymentTerms: "1",
+      };
+
   const [isOpen, setIsOpen] = useState(false);
-  const [date, setDate] = useState<Date>(() => new Date());
-  const [paymentTerms, setPaymentTerms] = useState<string>("1");
+  const [date, setDate] = useState<Date>(
+    () => new Date(invoiceToEdit.created_at || Date.now())
+  );
+  const [paymentTerms, setPaymentTerms] = useState<string>(() =>
+    String(invoiceToEdit.paymentTerms || 1)
+  );
   const [status, setStatus] = useState<"pending" | "draft" | "paid">("pending");
-  const [items, setItems] = useState<ItemType[]>([
-    {
-      id: 1,
-      name: "",
-      price: 0,
-      total: 0,
-      quantity: 1,
-    },
-  ]);
+  const [items, setItems] = useState<ItemType[]>(
+    () =>
+      invoiceToEdit.items || [
+        {
+          id: 1,
+          name: "",
+          price: 0,
+          total: 0,
+          quantity: 1,
+        },
+      ]
+  );
 
   const {
     register,
@@ -42,34 +109,39 @@ const NewInvoice = () => {
     formState: { errors },
   } = useForm({
     resolver: yupResolver(newInvoiceSchema),
+    defaultValues: initialFormData,
   });
 
-  const { createNewInvouce } = useNewInvoice();
+  const { createNewInvoice, editInvoice } = useNewInvoice();
 
-  const cancle = () => {
-    setDate(new Date());
-    setPaymentTerms("1");
-    setItems([
-      {
-        id: 1,
-        name: "",
-        price: 0,
-        total: 0,
-        quantity: 1,
-      },
-    ]);
+  const cancel = () => {
+    setDate(new Date(invoiceToEdit.created_at || Date.now()));
+    setPaymentTerms(String(invoiceToEdit.paymentTerms || 1));
+    setItems(
+      invoiceToEdit.items || [
+        {
+          id: 1,
+          name: "",
+          price: 0,
+          total: 0,
+          quantity: 1,
+        },
+      ]
+    );
     setStatus("pending");
-    reset();
+    reset(initialFormData);
   };
 
   useEffect(() => {
-    cancle();
+    cancel();
   }, [isOpen]);
 
-  const onSubmit: SubmitHandler<newInvoiceType> = (data) => {
+  const onSubmit: SubmitHandler<any> = (data) => {
     const formattedData: InvoiceType = {
+      ...invoiceToEdit,
+      user_id: userData?.id || "",
       created_at: new Date(date).toISOString(),
-      paymentDue: new Date().toISOString(),
+      paymentDue: calculatePaymentDue(new Date(date), parseInt(paymentTerms)),
       description: data.projectDescription,
       paymentTerms: parseInt(paymentTerms),
       clientName: data.clientName,
@@ -90,11 +162,33 @@ const NewInvoice = () => {
       items: items,
       total: items.reduce((acc, item) => acc + item.total, 0),
     };
-    createNewInvouce(formattedData, {
-      onSuccess: () => {
-        cancle();
-      },
-    });
+    isEdit && editId
+      ? editInvoice(
+          { data: formattedData, id: Number(editId) },
+          {
+            onSuccess: () => {
+              queryClient.invalidateQueries({
+                queryKey: [String(editId)],
+              });
+              showToast("Successfuly", "Invoice edited");
+              cancel();
+              setIsOpen(false);
+            },
+            onError: (err) => {
+              showToast("Error", err.message);
+            },
+          }
+        )
+      : createNewInvoice(formattedData, {
+          onSuccess: () => {
+            showToast("Successfuly", "Invoice added");
+            cancel();
+            setIsOpen(false);
+          },
+          onError: (err) => {
+            showToast("Error", err.message);
+          },
+        });
   };
 
   const addItem = () => {
@@ -119,25 +213,33 @@ const NewInvoice = () => {
   return (
     <Sheet onOpenChange={setIsOpen} open={isOpen}>
       <SheetTrigger>
-        <div
-          className="bg-purpleDark text-[#fff] text-lg flex items-center justify-between gap-x-4 rounded-full py-3 px-3"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <div className="bg-white rounded-full flex items-center justify-center p-3">
-            <Image
-              src="/assets/icon-plus.svg"
-              width={12}
-              height={12}
-              alt="new-invoice"
-            />
+        {isEdit ? (
+          <Button className="dark:text-white dark:bg-grayLow bg-slate-200 hover:bg-slate-300 text-foreground rounded-full">
+            Edit
+          </Button>
+        ) : (
+          <div
+            className="bg-purpleDark text-[#fff] text-lg flex items-center justify-between gap-x-4 rounded-full py-3 px-3"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            <div className="bg-white rounded-full flex items-center justify-center p-3">
+              <Image
+                src="/assets/icon-plus.svg"
+                width={12}
+                height={12}
+                alt="new-invoice"
+              />
+            </div>
+            <h2 className="md:block hidden">New Invoice</h2>
+            <h2 className="md:hidden">New</h2>
           </div>
-          <h2 className="md:block hidden">New Invoice</h2>
-          <h2 className="md:hidden">New</h2>
-        </div>
+        )}
       </SheetTrigger>
       <SheetContent side="left" className="overflow-auto dark:text-white">
         <SheetHeader>
-          <SheetTitle className="text-white">New Invoice</SheetTitle>
+          <SheetTitle className="text-white">
+            {isEdit ? "Edit Invoice" : "New Invoice"}
+          </SheetTitle>
         </SheetHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <h2 className="text-purpleDark mb-4">Bill From</h2>
@@ -346,7 +448,7 @@ const NewInvoice = () => {
                   <Image
                     src="/assets/icon-delete.svg"
                     alt="icon-delete"
-                    className="ml-4 h-full"
+                    className="ml-4 h-full cursor-pointer"
                     width={24}
                     height={24}
                     onClick={() =>
@@ -368,20 +470,22 @@ const NewInvoice = () => {
             <Button
               type="button"
               onClick={() => {
-                cancle();
+                cancel();
                 setIsOpen(!isOpen);
               }}
               className="dark:bg-foreground dark:text-white bg-slate-200 hover:bg-slate-300 text-foreground rounded-full"
             >
-              Discard
+              {isEdit ? "Cancle" : "Discard"}
             </Button>
-            <Button
-              onClick={() => setStatus("draft")}
-              type="submit"
-              className="dark:bg-foreground dark:text-white bg-slate-200 hover:bg-slate-300 text-foreground rounded-full"
-            >
-              Save as Draft
-            </Button>
+            {!isEdit && (
+              <Button
+                onClick={() => setStatus("draft")}
+                type="submit"
+                className="dark:bg-foreground dark:text-white bg-slate-200 hover:bg-slate-300 text-foreground rounded-full"
+              >
+                Save as Draft
+              </Button>
+            )}
             <Button
               type="submit"
               onClick={() => setStatus("pending")}

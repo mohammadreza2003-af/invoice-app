@@ -1,14 +1,27 @@
 import Image from "next/image";
-import { formatData, nameFixer } from "@/utils/helper";
+import { formatDate, nameFixer } from "@/utils/helper";
 import useInvoices from "@/app/hooks/useInvoices";
+import { useRouter } from "next/navigation";
+import useUserData from "@/app/hooks/useUserData";
+import { Skeleton } from "./ui/skeleton";
 
 const Invoice = () => {
   const { isLoading, data } = useInvoices();
+
+  const { data: userData } = useUserData();
+
+  console.log(userData, "userData");
+
+  const router = useRouter();
   const invoices = data ?? [];
   if (isLoading) {
     return (
-      <div className="w-full flex items-center justify-center">
-        <h2>Loading...</h2>
+      <div className="md:min-w-[45rem] sm:min-w-[35rem] min-w-[24rem] h-[80%]">
+        <div className="flex flex-col space-y-6">
+          <Skeleton className="md:h-[90px] h-[141px] w-full rounded-lg dark:bg-foreground bg-slate-200" />
+          <Skeleton className="md:h-[90px] h-[141px] w-full rounded-lg dark:bg-foreground bg-slate-200" />
+          <Skeleton className="md:h-[90px] h-[141px] w-full rounded-lg dark:bg-foreground bg-slate-200" />
+        </div>
       </div>
     );
   }
@@ -37,17 +50,20 @@ const Invoice = () => {
   };
 
   return (
-    <div className="md:min-w-[45rem] sm:min-w-[35rem] min-w-[24rem] h-[80%]">
+    <div className="md:min-w-[45rem] sm:min-w-[35rem] min-w-[24rem] h-[80%] scrollbar-hide">
       {invoices.map((invoice) => (
         <div
           key={invoice.id}
-          className="bg-background dark:bg-foreground invoice-shadow rounded-lg mb-6 px-8 py-6 items-center flex flex-col gap-y-4 md:flex-row justify-between gap-x-4 w-full dark:text-primary border border-transparent hover:border hover:border-purpleLight transition-all ease-in-out duration-300"
+          onClick={() => {
+            router.push(`/invoice/${invoice.id}`);
+          }}
+          className="bg-background dark:bg-foreground invoice-shadow rounded-lg mb-6 px-8 py-6 items-center flex flex-col gap-y-4 md:flex-row justify-between gap-x-4 w-full dark:text-primary border border-transparent hover:border hover:border-purpleLight transition-all ease-in-out duration-300 cursor-pointer"
         >
           <h2 className="md:block hidden">
             <span className="text-purpleDark">#</span>
             <span className="font-semibold">{invoice.id}</span>
           </h2>
-          <h2 className="md:block hidden">{formatData(invoice?.created_at)}</h2>
+          <h2 className="md:block hidden">{formatDate(invoice?.created_at)}</h2>
           <p className="md:block hidden">{invoice.clientName}</p>
           <h2 className="md:block hidden font-semibold text-lg">
             ${invoice.total.toFixed(2)}
@@ -72,7 +88,7 @@ const Invoice = () => {
           </div>
           <div className="items-center justify-between w-full flex md:hidden">
             <div className="items-start justify-center flex-col w-full flex md:hidden">
-              <h2>{formatData(invoice?.created_at)}</h2>
+              <h2>{formatDate(invoice?.created_at)}</h2>
               <h2 className="font-semibold text-lg">
                 ${invoice.total.toFixed(2)}
               </h2>

@@ -11,6 +11,7 @@ export type LoginSubmitFrom = {
 };
 
 export type InvoiceType = {
+  user_id: string;
   id?: string;
   created_at: string;
   paymentDue: string;
@@ -40,7 +41,7 @@ export type ItemType = {
   total: number;
 };
 
-export type newInvoiceType = {
+export type NewInvoiceFormData = {
   id?: string;
   created_at: string;
   paymentDue: string;

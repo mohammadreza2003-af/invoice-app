@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm, SubmitHandler } from "react-hook-form";
 import Link from "next/link";
 
@@ -18,17 +18,30 @@ import {
   CardTitle,
   CardFooter,
 } from "@/components/ui/card";
+import useUserData from "@/app/hooks/useUserData";
+import { showToast } from "@/utils/helper";
 
 const SignUp = () => {
   const router = useRouter();
   const { register, handleSubmit, getValues, formState } =
     useForm<SignUpSubmitFrom>();
+
+  const { data: userData } = useUserData();
+  const query = useQueryClient();
+
   const { errors } = formState;
-  const { isPaused, mutate, status } = useMutation({
+  const { isPaused, mutate } = useMutation({
     mutationFn: signup,
     onSuccess: (res) => {
+      query.invalidateQueries({
+        queryKey: ["userData"],
+      });
       console.log(res);
       router.push("/signup/confirm");
+    },
+    onError: (err) => {
+      showToast("Error", err.message);
+      console.log(err);
     },
   });
 
@@ -54,7 +67,7 @@ const SignUp = () => {
             className="space-y-6"
             onSubmit={handleSubmit(onSubmit, onError)}
           >
-            <div>
+            <div className="relative">
               <Label
                 htmlFor="fullname"
                 className="block text-sm font-medium mb-2"
@@ -68,15 +81,17 @@ const SignUp = () => {
                   validate: (value: string) =>
                     value.length > 5 || "The Full Name is very short",
                 })}
-                className="block w-full px-3 py-2 mt-1"
+                className={`block w-full px-3 py-2 mt-1 border ${
+                  errors.fullName ? "border-red-500" : ""
+                } rounded-md shadow-sm focus:outline-none focus:ring focus:ring-opacity-50`}
               />
+              {errors.fullName && (
+                <p className="absolute inset-y-0 right-0 top-[40%] flex items-center pr-3 text-red-500">
+                  {errors.fullName.message}
+                </p>
+              )}
             </div>
-            {errors.fullName?.message && (
-              <p className="text-red-500 font-medium">
-                {errors.fullName.message}
-              </p>
-            )}
-            <div>
+            <div className="relative">
               <Label htmlFor="email" className="block text-sm font-medium mb-2">
                 Email address
               </Label>
@@ -85,13 +100,17 @@ const SignUp = () => {
                 {...register("email", {
                   required: "Email is required",
                 })}
-                className="block w-full px-3 py-2 mt-1"
+                className={`block w-full px-3 py-2 mt-1 border ${
+                  errors.email ? "border-red-500" : ""
+                } rounded-md shadow-sm focus:outline-none focus:ring focus:ring-opacity-50`}
               />
+              {errors.email && (
+                <p className="absolute inset-y-0 right-0 top-[40%] flex items-center pr-3 text-red-500">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
-            {errors.email?.message && (
-              <p className="text-red-500 font-medium">{errors.email.message}</p>
-            )}
-            <div>
+            <div className="relative">
               <Label
                 htmlFor="password"
                 className="block text-sm font-medium mb-2"
@@ -103,16 +122,18 @@ const SignUp = () => {
                 {...register("password", {
                   required: "The Password is required",
                   validate: (value: string) =>
-                    value.length > 8 || "The Password is very short",
+                    value.length >= 8 || "The Password is very short",
                 })}
-                className="block w-full px-3 py-2 mt-1"
+                className={`block w-full px-3 py-2 mt-1 border ${
+                  errors.password ? "border-red-500" : ""
+                } rounded-md shadow-sm focus:outline-none focus:ring focus:ring-opacity-50`}
               />
+              {errors.password && (
+                <p className="absolute inset-y-0 right-0 top-[40%] flex items-center pr-3 text-red-500">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
-            {errors.password?.message && (
-              <p className="text-red-500 font-medium">
-                {errors.password.message}
-              </p>
-            )}
             <div className="relative">
               <Label
                 htmlFor="confirmPassword"
@@ -120,7 +141,7 @@ const SignUp = () => {
               >
                 Confirm Password
               </Label>
-              <input
+              <Input
                 type="password"
                 {...register("confirmPassword", {
                   required: "Confirm Password is required",
@@ -128,7 +149,7 @@ const SignUp = () => {
                     value === getValues().password || "Password don't match",
                 })}
                 className={`block w-full px-3 py-2 mt-1 border ${
-                  errors.password ? "border-red-500" : "border-gray-300"
+                  errors.password ? "border-red-500" : ""
                 } rounded-md shadow-sm focus:outline-none focus:ring focus:ring-opacity-50`}
               />
               {errors.confirmPassword && (

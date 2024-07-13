@@ -10,7 +10,7 @@ export const showToast = (title: string, description: string) => {
   });
 };
 
-export const formatData = (d: string) => {
+export const formatDate = (d: string) => {
   const date = new Date(d);
   const months = [
     "Jan",
@@ -38,13 +38,11 @@ export const nameFixer = (name: string) => {
   return temp + name.slice(1);
 };
 
-export const dateWithoutTimezone = (date: string) => {
-  const newDate = new Date(date);
-  const tzoffset = newDate.getTimezoneOffset() * 60000;
-  const withoutTimezone = new Date(newDate.valueOf() - tzoffset)
-    .toISOString()
-    .slice(0, -1);
-  return withoutTimezone;
+export const calculatePaymentDue = (createdAt: Date, paymentTerms: number) => {
+  const createdDate = new Date(createdAt);
+  createdDate.setDate(createdDate.getDate() + paymentTerms);
+  console.log(createdDate, "create Date");
+  return createdDate.toISOString();
 };
 
 export const newInvoiceSchema = yup.object().shape({
@@ -62,7 +60,7 @@ export const newInvoiceSchema = yup.object().shape({
   clientCity: yup.string().required("City is required"),
   clientPostCode: yup.string().required("Post Code is required"),
   clientCountry: yup.string().required("Country is required"),
-  createdAt: yup.date(),
+  createdAt: yup.date().required("Invoice Date is required"),
   projectDescription: yup.string().required("Project Description is required"),
   items: yup
     .array()

@@ -11,28 +11,50 @@ const checkUser = async () => {
 };
 
 const signup = async (info: SignUpSubmitFrom) => {
-  console.log("info", info);
-  const res = await fetch("/api/signup", {
-    body: JSON.stringify(info),
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  const data = await res.json();
-  return data;
+  try {
+    const res = await fetch("/api/signup", {
+      body: JSON.stringify(info),
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || "An error occurred while signup.");
+    }
+    const data = await res.json();
+    return data;
+  } catch (error: any) {
+    console.error("Login error:", error.message);
+    throw new Error(error.message);
+  }
 };
 
 const login = async (info: LoginSubmitFrom) => {
-  const res = await fetch("/api/signin", {
-    body: JSON.stringify(info),
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  const data = await res.json();
-  return data;
+  try {
+    const res = await fetch("/api/signin", {
+      body: JSON.stringify(info),
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(
+        errorData.message || "An error occurred while signing in."
+      );
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error: any) {
+    console.error("Login error:", error.message);
+    throw new Error(error.message);
+  }
 };
 
 const signout = async () => {
@@ -44,16 +66,26 @@ const signout = async () => {
 };
 
 const forgotpassword = async (email: string) => {
-  const response = await fetch("/api/forgot-password", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ email }),
-  });
+  try {
+    const res = await fetch("/api/forgot-password", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
 
-  const data = await response.json();
-  return data;
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || "An error occurred.");
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error: any) {
+    console.error("Login error:", error.message);
+    throw new Error(error.message);
+  }
 };
 
 export { signup, login, signout, forgotpassword, checkUser };
