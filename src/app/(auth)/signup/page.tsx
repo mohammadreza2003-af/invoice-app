@@ -18,7 +18,6 @@ import {
   CardTitle,
   CardFooter,
 } from "@/components/ui/card";
-import useUserData from "@/hooks/useUserData";
 import { showToast } from "@/utils/helper";
 
 const SignUp = () => {
@@ -54,7 +53,7 @@ const SignUp = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
-      <Card className="w-full max-w-md p-8 space-y-8 bg-background rounded shadow-md">
+      <Card className="w-full max-w-md p-8 space-y-8 bg-background rounded sm:shadow-md sm:border sm:border-solid border-none shadow-none sm:mt-8 mt-24 h-full">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
             Sign Up

@@ -237,7 +237,7 @@ const NewInvoice = ({
       </SheetTrigger>
       <SheetContent side="left" className="overflow-auto dark:text-white">
         <SheetHeader>
-          <SheetTitle className="text-white">
+          <SheetTitle className="dark:text-white">
             {isEdit ? "Edit Invoice" : "New Invoice"}
           </SheetTitle>
         </SheetHeader>
@@ -489,7 +489,7 @@ const NewInvoice = ({
             <Button
               type="submit"
               onClick={() => setStatus("pending")}
-              className="dark:bg-foreground dark:text-white dark:bg-purpleDark bg-purpleDark hover:bg-purpleLight hover:dark:bg-purpleLight text-foreground rounded-full"
+              className="dark:bg-foreground dark:text-white text-white dark:bg-purpleDark bg-purpleDark hover:bg-purpleLight hover:dark:bg-purpleLight rounded-full"
             >
               Save & Send
             </Button>
