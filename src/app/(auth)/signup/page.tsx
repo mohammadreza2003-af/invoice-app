@@ -28,13 +28,13 @@ const SignUp = () => {
   const query = useQueryClient();
 
   const { errors } = formState;
-  const { isPaused, mutate } = useMutation({
+  const { isPending, mutate } = useMutation({
     mutationFn: signup,
     onSuccess: (res) => {
       query.invalidateQueries({
         queryKey: ["userData"],
       });
-      router.push("/signup/confirm");
+      router.push("/");
     },
     onError: (err) => {
       showToast("Error", err.message);
@@ -157,11 +157,11 @@ const SignUp = () => {
             </div>
             <div>
               <Button
-                disabled={isPaused}
+                disabled={isPending}
                 type="submit"
                 className="flex justify-center w-full px-4 py-2 text-sm font-medium"
               >
-                {isPaused ? "Loading..." : "Sign up"}
+                {isPending ? "Loading..." : "Sign up"}
               </Button>
             </div>
           </form>

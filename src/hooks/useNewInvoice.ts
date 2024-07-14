@@ -19,19 +19,19 @@ const useNewInvoice = () => {
     showToast("Error", err.message);
   };
 
-  const { mutate: createNewInvoice } = useMutation({
+  const { mutate: createNewInvoice, isPending: isCreating } = useMutation({
     mutationFn: (data: InvoiceType) => newInvoice(data),
     onSuccess: onSuccessHandler,
     onError: onErrorHandler,
   });
 
-  const { mutate: editInvoice } = useMutation({
+  const { mutate: editInvoice, isPending: isEditing } = useMutation({
     mutationFn: ({ data, id }: EditInvoiceParams) => newInvoice(data, id),
     onSuccess: onSuccessHandler,
     onError: onErrorHandler,
   });
 
-  return { createNewInvoice, editInvoice };
+  return { createNewInvoice, editInvoice, isCreating, isEditing };
 };
 
 export default useNewInvoice;

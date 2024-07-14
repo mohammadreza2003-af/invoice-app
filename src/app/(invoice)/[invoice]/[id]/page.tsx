@@ -46,10 +46,10 @@ const InvoiceId = () => {
   const { mutate: deleteIn } = useMutation({
     mutationFn: deleteInvoice,
     onSuccess: (res) => {
-      showToast("Successfuly", res.message);
       queryClient.invalidateQueries({
         queryKey: ["invoices"],
       });
+      showToast("Successfuly", res.message);
       router.push("/");
     },
     onError: (err) => {
@@ -62,9 +62,12 @@ const InvoiceId = () => {
     // @ts-ignore
     mutationFn: editInvoice,
     onSuccess: (res) => {
+      queryClient.invalidateQueries({
+        queryKey: [id],
+      });
       showToast("Successfuly", "Paid");
       queryClient.invalidateQueries({
-        queryKey: [String(id)],
+        queryKey: ["invoices"],
       });
     },
     onError: (err) => {

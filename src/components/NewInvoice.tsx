@@ -112,7 +112,8 @@ const NewInvoice = ({
     defaultValues: initialFormData,
   });
 
-  const { createNewInvoice, editInvoice } = useNewInvoice();
+  const { createNewInvoice, editInvoice, isCreating, isEditing } =
+    useNewInvoice();
 
   const cancel = () => {
     setDate(new Date(invoiceToEdit.created_at || Date.now()));
@@ -469,6 +470,7 @@ const NewInvoice = ({
           <div className="flex dark:bg-background w-full justify-between md:justify-end gap-x-4 items-center py-8">
             <Button
               type="button"
+              disabled={isEditing || isCreating}
               onClick={() => {
                 cancel();
                 setIsOpen(!isOpen);
@@ -479,6 +481,7 @@ const NewInvoice = ({
             </Button>
             {!isEdit && (
               <Button
+                disabled={isEditing || isCreating}
                 onClick={() => setStatus("draft")}
                 type="submit"
                 className="dark:bg-foreground dark:text-white bg-slate-200 hover:bg-slate-300 text-foreground rounded-full"
@@ -487,6 +490,7 @@ const NewInvoice = ({
               </Button>
             )}
             <Button
+              disabled={isEditing || isCreating}
               type="submit"
               onClick={() => setStatus("pending")}
               className="dark:bg-foreground dark:text-white text-white dark:bg-purpleDark bg-purpleDark hover:bg-purpleLight hover:dark:bg-purpleLight rounded-full"

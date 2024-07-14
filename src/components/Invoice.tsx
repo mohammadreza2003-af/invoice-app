@@ -7,6 +7,7 @@ import { Skeleton } from "./ui/skeleton";
 const Invoice = () => {
   const { isLoading, data } = useInvoices();
 
+
   const router = useRouter();
   const invoices = data ?? [];
   if (isLoading) {
