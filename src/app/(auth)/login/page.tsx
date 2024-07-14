@@ -20,7 +20,6 @@ import {
 import { LoginSubmitFrom } from "@/constant/types";
 import { login } from "@/services/auth";
 import { showToast } from "@/utils/helper";
-import useUserData from "@/hooks/useUserData";
 
 const Login = () => {
   const router = useRouter();
@@ -54,7 +53,7 @@ const Login = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
-      <Card className="w-full max-w-md p-8 space-y-8 bg-background rounded shadow-md">
+      <Card className="w-full max-w-md p-8 space-y-8 bg-background rounded sm:shadow-md sm:border sm:border-solid border-none shadow-none sm:mt-8 mt-12 h-full">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
             Login

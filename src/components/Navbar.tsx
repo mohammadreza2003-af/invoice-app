@@ -1,24 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import { ModeToggle } from "./mode-toggle";
 import { useRouter } from "next/navigation";
 import { Button } from "./ui/button";
 import { signout } from "@/services/auth";
 import { showToast } from "@/utils/helper";
 import { useQueryClient } from "@tanstack/react-query";
-import { Toggle } from "@/components/ui/toggle";
 import useAuth from "@/hooks/useAuth";
-import { Bold } from "lucide-react";
-import { useState } from "react";
 import { useTheme } from "next-themes";
 
 const Navbar = () => {
   const query = useQueryClient();
   const router = useRouter();
   const { setTheme } = useTheme();
-
-  const [toggle, setToggle] = useState("system");
 
   const { isLogin } = useAuth();
   const handleSignout = async () => {
@@ -29,15 +23,6 @@ const Navbar = () => {
       });
       showToast("Successfuly", "Logout successful. See you next time!");
       router.push("/login");
-    }
-  };
-
-  const handleToggleChange = (isToggled: string) => {
-    console.log(isToggled);
-    if (isToggled) {
-      setTheme("dark");
-    } else {
-      setTheme("light");
     }
   };
 
