@@ -137,7 +137,9 @@ const InvoiceId = () => {
               <div>{renderInvoiceStatus(invoice?.status)}</div>
             </div>
             <div className="sm:flex hidden  items-center gap-x-2 justify-center">
-              <NewInvoice invoiceToEdit={invoice} />
+              {invoice.status !== "paid" && (
+                <NewInvoice invoiceToEdit={invoice} />
+              )}
               <Button
                 onClick={() => deleteIn(Number(id))}
                 className="dark:bg-foreground dark:text-white dark:bg-red-500 bg-red-500 text-white hover:bg-red-400 hover:dark:bg-red-400 rounded-full"
